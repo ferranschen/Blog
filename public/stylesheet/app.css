@@ -1,7 +1,22 @@
-h1 {
-	color: green;
+body {
+  background-color: #fff;
 }
 
-.ui.menu{
-	border-radius: 0;
+.ui.menu.fixed {
+  border-radius: 0;
+  background-color: rgba(255,255,255,0.95);
+}
+
+.ui.segment {
+  border-radius: 0;
+}
+
+#paging {
+  
+}
+
+
+.ui.grid {
+	margin-top: 5em;
+	margin-bottom: 5em;
 }
