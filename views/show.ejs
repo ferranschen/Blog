@@ -15,8 +15,9 @@
   </div>
 </div>
      <form id="delete" class="ui form" action="/posts/<%=post._id%>?_method=DELETE" method="POST">
-      <a class="ui blue basic button" href="/posts/<%= post._id%>/edit"><i class="edit icon"></i>編輯貼文 </a>
+      <a class="ui pink basic button" href="/posts/<%= post._id%>/edit"><i class="edit icon"></i>編輯貼文 </a>
       <button class="ui red basic button" type="submit" ><i class="trash outline icon"></i>刪除貼文</button>
+      <a class="ui blue basic button" href="javascript:history.back()">上一頁</a>
     </form>
 
 

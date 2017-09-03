@@ -34,7 +34,7 @@ const port = process.env.PORT || 3000,
 // 定義分頁的參數
 // ---------------------------------------------------------
 
-const perPage = 10; // 一頁最多可顯示的post數量
+const perPage = 7; // 一頁最多可顯示的post數量
 
 // ---------------------------------------------------------
 // connect to mongodb
@@ -77,23 +77,31 @@ app.get("/posts/p/:page", (req, res) => {
 			console.log('錯誤訊息：', err.message);
 			res.redirect("back");
 		} else {
+    		// 計算所有頁數
     		nPage = Math.floor(count / perPage);
-    		
+
     	}
 	});
+	// 
+	// 防止手動更改，有非同步的問題
+
 	// 文章分頁
-    const query = Post
-    .find()
-    .skip(curPage * perPage)
-    .limit(perPage)
-    .exec( (err, posts) => {
-    	if (err) {
-			console.log('錯誤訊息：', err.message);
-			res.redirect("back");
-		} else {
-			res.render('home', {posts:posts, curPage:curPage, nPage:nPage});
-		}
-    });
+	    const query = Post
+	    .find()
+	    .skip(curPage * perPage)
+	    .limit(perPage)
+	    .exec( (err, posts) => {
+	    	if (err) {
+				console.log('錯誤訊息：', err.message);
+				res.redirect("back");
+			} else {
+				if (curPage > nPage || curPage < 0) { //防止手動輸入
+    				res.redirect("back");
+    			} else {
+					res.render('home', {posts:posts, curPage:curPage, nPage:nPage});
+				}
+			}
+	    });
 
 });
 
@@ -183,7 +191,7 @@ app.delete("/posts/:id", (req, res) => {
 			console.log('錯誤訊息：', err.message);
             res.redirect("back");
         } else {
-            res.redirect("/posts");
+            res.redirect("/");
         }
     });
 });
