@@ -121,8 +121,8 @@ app.post("/posts", (req, res) => {
 // ---------------------------------------------------------
 // 觀看單一文章
 // ---------------------------------------------------------
-app.get("/posts/:id", (req, res) => {
 
+app.get("/posts/:id", (req, res) => {
 
 	Post.findById(req.params.id, (err, post) => {
 		if (err) {
@@ -134,6 +134,50 @@ app.get("/posts/:id", (req, res) => {
 	});
 });
 
+// ---------------------------------------------------------
+// 得到單一文章的修改表
+// ---------------------------------------------------------
+
+app.get("/posts/:id/edit", (req, res) => {
+	Post.findById(req.params.id, (err, post) => {
+		if (err) {
+			console.log('錯誤訊息：', err.message);
+            res.redirect("back");
+		} else {
+            res.render("edit", {post:post});
+		}
+	});
+});
+
+// ---------------------------------------------------------
+// 更新單一文章
+// ---------------------------------------------------------
+
+app.put("/posts/:id", (req, res) => {
+	req.body.post.body = req.sanitize(req.body.post.body);
+	Post.findByIdAndUpdate(req.params.id, req.body.post, (err, updatedPost) => {
+		if (err) {
+			console.log('錯誤訊息：', err.message);
+            res.redirect("back");
+		} else {
+			res.redirect("/posts/" + req.params.id);
+		}
+	});
+});
+
+// ---------------------------------------------------------
+// 刪除單一文章
+// ---------------------------------------------------------
+app.delete("/posts/:id", (req, res) => {
+    Post.findByIdAndRemove(req.params.id, (err) => {
+        if(err) {
+			console.log('錯誤訊息：', err.message);
+            res.redirect("back");
+        } else {
+            res.redirect("/posts");
+        }
+    });
+});
 
 // ---------------------------------------------------------
 // 伺服器開始運行

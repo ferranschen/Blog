@@ -15,7 +15,9 @@ body {
   
 }
 
-
+.ui.form#delete {
+	display: inline-block;
+}
 .ui.grid {
 	margin-top: 5em;
 	margin-bottom: 5em;
