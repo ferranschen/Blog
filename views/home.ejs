@@ -25,7 +25,26 @@
 	</div> 
 <!-- end of items -->
 </div>
+<% if (nPage > 0) { %>
+<div class="ui container" id="paging">
+		<div class="ui pagination menu">
 
+		  <!-- <a class="active item">
+		    1
+		  </a>
+		  <div class="disabled item">
+		    2
+		  </div> -->
+		<% if(curPage > 0) { %>
+		<a href="/posts/p/<%= curPage - 1%>" class="item">上一頁</a>
+		<% } %> 
+		<% if(curPage < nPage) { %>
+		<!-- if(curPage < nPage) -->
+		<a href="/posts/p/<%= curPage + 1%>" class="item">下一頁</a>
+		<% } %> 
+		</div>
+</div>
+<% } %>
 
 
 <% include ./partials/footer %>

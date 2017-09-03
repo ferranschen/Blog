@@ -5,10 +5,14 @@ const express = require('express');
 	  bodyParser = require('body-parser'),
 	  sanitizer = require('express-sanitizer'),
 	  methodOverride = require('method-override'),
-	  mongoose 		 = require('mongoose');
+	  mongoose 		 = require('mongoose'),
+	  mongoose.Promise = require("bluebird"),
+	  seedDB 		 = require('./seeds'),
+	  Post 			 = require('./models/post');
 
 
 
+// seedDB();
 // ---------------------------------------------------------
 // app的參數設定
 // ---------------------------------------------------------
@@ -27,25 +31,10 @@ const port = process.env.PORT || 3000,
 	  ip   = process.env.IP || '127.0.0.1';
 
 // ---------------------------------------------------------
-// post Schema ：定義一個post的結構
+// 定義分頁的參數
 // ---------------------------------------------------------
 
-const postSchema = new mongoose.Schema({
-	title: String,
-	image: String,
-	body: String,
-	// comments: [{ body: String, date: Date }],
-	// tags: [ String ],
-	// created: {type: Date, default: Date.now},
-	// hidden: Boolean,
-	// meta: {
- //    	votes: Number,
- //    	favs:  Number
- //    	}
-});
-
-const Post = mongoose.model('Post', postSchema);
-
+const perPage = 10; // 一頁最多可顯示的post數量
 
 // ---------------------------------------------------------
 // connect to mongodb
@@ -71,21 +60,41 @@ mongoose.connect('mongodb://localhost/post', {
 // 主頁面
 // ---------------------------------------------------------
 app.get("/", (req, res) => {
-	res.redirect("/posts");
+	res.redirect("/posts/p/0");
 });
+
 // ---------------------------------------------------------
-// 部落格主頁面
+// 部落格主頁面/不同分頁的routing
 // ---------------------------------------------------------
 
-app.get("/posts", (req, res) => {
-	Post.find({},(err, posts) => {
+app.get("/posts/p/:page", (req, res) => {
+
+	const curPage = Number(req.params.page);
+	var nPage;
+	// 計算文章總數
+	Post.count({}, function(err, count){
 		if (err) {
 			console.log('錯誤訊息：', err.message);
+			res.redirect("back");
 		} else {
-			res.render('home', {posts:posts});
-		}
+    		nPage = Math.floor(count / perPage);
+    		
+    	}
 	});
-	
+	// 文章分頁
+    const query = Post
+    .find()
+    .skip(curPage * perPage)
+    .limit(perPage)
+    .exec( (err, posts) => {
+    	if (err) {
+			console.log('錯誤訊息：', err.message);
+			res.redirect("back");
+		} else {
+			res.render('home', {posts:posts, curPage:curPage, nPage:nPage});
+		}
+    });
+
 });
 
 // ---------------------------------------------------------
