@@ -1,0 +1,20 @@
+<% include ./partials/header %>
+
+<div class="ui huge header">建立一個文章</div>
+<form class="ui form" action="/posts" method="POST">
+  <div class="field">
+    <label>標題</label>
+    <input type="text" name="post[title]" placeholder="標題">
+  </div>
+  <div class="field">
+    <label>圖片位址</label>
+    <input type="text" name="post[image]" placeholder="圖片URL">
+  </div>
+  <div class="field">
+    <label>內容</label>
+    <textarea name="post[body]"></textarea>
+  </div>
+  <button class="ui button" type="submit">Submit</button>
+</form>
+
+<% include ./partials/footer %>
