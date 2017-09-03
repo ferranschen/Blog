@@ -103,11 +103,11 @@ app.get("/posts/new", (req, res) => {
 app.post("/posts", (req, res) => {
 
 
- 	// req.body.blog.body = req.sanitize(req.body.blog.body);
+ 	req.body.post.body = req.sanitize(req.body.post.body);
     console.log(req.body.post);
 
     Post.create(req.body.post, (err, post) => {
-        if(err) {
+        if (err) {
             console.log('錯誤訊息：', err.message);
             res.redirect("back");
         } else {
@@ -118,6 +118,21 @@ app.post("/posts", (req, res) => {
 
 });
 
+// ---------------------------------------------------------
+// 觀看單一文章
+// ---------------------------------------------------------
+app.get("/posts/:id", (req, res) => {
+
+
+	Post.findById(req.params.id, (err, post) => {
+		if (err) {
+			console.log('錯誤訊息：', err.message);
+            res.redirect("back");
+		} else {
+            res.render("show", {post:post});
+		}
+	});
+});
 
 
 // ---------------------------------------------------------
