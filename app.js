@@ -35,6 +35,7 @@ const port = process.env.PORT || 3000,
 // ---------------------------------------------------------
 
 const perPage = 7; // 一頁最多可顯示的post數量
+// var curPage = 0;
 
 // ---------------------------------------------------------
 // connect to mongodb
@@ -60,33 +61,29 @@ mongoose.connect('mongodb://localhost/post', {
 // 主頁面
 // ---------------------------------------------------------
 app.get("/", (req, res) => {
-	res.redirect("/posts/p/0");
+	res.redirect("/posts");
 });
 
 // ---------------------------------------------------------
 // 部落格主頁面/不同分頁的routing
 // ---------------------------------------------------------
+app.get("/posts", (req, res) => {
 
-app.get("/posts/p/:page", (req, res) => {
+	const curPage = 0;
+		var nPage;
+		// 計算文章總數
+		Post.count({}, function(err, count){
+			if (err) {
+				console.log('錯誤訊息：', err.message);
+				res.redirect("back");
+			} else {
+	    		// 計算所有頁數
+	    		nPage = Math.floor(count / perPage);
 
-	const curPage = Number(req.params.page);
-	var nPage;
-	// 計算文章總數
-	Post.count({}, function(err, count){
-		if (err) {
-			console.log('錯誤訊息：', err.message);
-			res.redirect("back");
-		} else {
-    		// 計算所有頁數
-    		nPage = Math.floor(count / perPage);
-
-    	}
-	});
-	// 
-	// 防止手動更改，有非同步的問題
-
-	// 文章分頁
-	    const query = Post
+	    	}
+		});
+		console.log(pageCount());
+		const query = Post
 	    .find()
 	    .skip(curPage * perPage)
 	    .limit(perPage)
@@ -102,7 +99,6 @@ app.get("/posts/p/:page", (req, res) => {
 				}
 			}
 	    });
-
 });
 
 // ---------------------------------------------------------
@@ -114,25 +110,57 @@ app.get("/posts/new", (req, res) => {
 });
 
 // ---------------------------------------------------------
-// 創建一個post
+// Route到某一頁/創建一個post/
 // ---------------------------------------------------------
 
 app.post("/posts", (req, res) => {
+// 
 
+	if(typeof req.body.page !== undefined && req.body.page !== null) {
 
- 	req.body.post.body = req.sanitize(req.body.post.body);
-    console.log(req.body.post);
+		const curPage = Number(req.body.page);
+		var nPage;
+		// 計算文章總數
+		Post.count({}, function(err, count){
+			if (err) {
+				console.log('錯誤訊息：', err.message);
+				res.redirect("back");
+			} else {
+	    		// 計算所有頁數
+	    		nPage = Math.floor(count / perPage);
+	    	}
+		});
+		const query = Post
+	    .find()
+	    .skip(curPage * perPage)
+	    .limit(perPage)
+	    .exec( (err, posts) => {
+	    	if (err) {
+				console.log('錯誤訊息：', err.message);
+				res.redirect("back");
+			} else {
+				if (curPage > nPage || curPage < 0) { //防止手動輸入
+    				res.redirect("back");
+    			} else {
+					res.render('home', {posts:posts, curPage:curPage, nPage:nPage});
+				}
+			}
+	    });
+	// 
 
-    Post.create(req.body.post, (err, post) => {
-        if (err) {
-            console.log('錯誤訊息：', err.message);
-            res.redirect("back");
-        } else {
-            console.log("A NEW POST ADDED.");
-            res.redirect("/posts");
-        }
-    });
-
+	} else {
+	 	req.body.post.body = req.sanitize(req.body.post.body);
+	    console.log(req.body.post);
+	    Post.create(req.body.post, (err, post) => {
+	        if (err) {
+	            console.log('錯誤訊息：', err.message);
+	            res.redirect("back");
+	        } else {
+	            console.log("A NEW POST ADDED.");
+	            res.redirect("/");
+	        }
+	    });
+	}
 });
 
 // ---------------------------------------------------------
@@ -202,3 +230,12 @@ app.delete("/posts/:id", (req, res) => {
 app.listen(port, () => {
    console.log(`Blog server is listening on ${port}`); 
 });
+
+
+
+
+
+
+
+
+
