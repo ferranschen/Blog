@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $("button").click(function() {
+      // $.ajax({
+      //     method: "POST",
+      //     url: "/search",
+      //     data: { name: "John", location: "Boston" }
+      //   })
+      //   .done(function(msg) {
+      //     alert("Data Saved: " + JSON.stringify(msg, undefined, 2));
+      //   });
+      
+      $.post("/search", {
+          name: "Donald Duck",
+          city: "Duckburg"
+        },
+        function(data, status) {
+          alert("Data: " + data + "\nStatus: " + status);
+        });
+    });
+  });
+  </script>
+</head>
+
+<body>
+  <h1>hello world</h1>
+  <button type="">ajax 測試</button>
+  <code></code>
+</body>
+
+</html>
