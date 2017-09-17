@@ -1,5 +1,8 @@
 .*
 *~
+*.sh
+*.o
+
 node_modules/
 
 !.gitignore
